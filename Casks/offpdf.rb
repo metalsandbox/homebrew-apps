@@ -1,6 +1,6 @@
 cask "offpdf" do
-  version "0.3.2"
-  sha256 "db147a93566cc0348e1dd7f5a9def9afb217e81894a01237f2232a58926bece9"
+  version "0.4.0"
+  sha256 "596659d480622ca10e42e37f016b852e70180f76b2f212f098f0df88ac8e247c"
 
   url "https://github.com/McanKul/offpdf/releases/download/v#{version}/OffPDF_#{version}_aarch64.dmg"
   name "OffPDF"
