@@ -29,7 +29,7 @@ cask "steam-arm64" do
         *) echo 'Unable to check running Steam processes; stopping.' >&2; exit 1 ;;
       esac
     SH
-    run "/usr/bin/lipo", args: ["-verify_arch", "arm64", "{{staged_path}}/Steam.app/Contents/MacOS/steam_osx"]
+    run "/usr/bin/lipo", args: ["{{staged_path}}/Steam.app/Contents/MacOS/steam_osx", "-verify_arch", "arm64"]
     run "/usr/bin/codesign",
         args: [
           "--verify", "--deep", "--strict", "-R",

@@ -17,6 +17,8 @@ Date: 2026-10-23 (Asia/Shanghai). Host: Apple Silicon arm64, macOS 27.0.1 (26A43
 - `spctl` inside Homebrew flight sandbox fails with `internal error in Code Signing subsystem` on this host. It is therefore a mandatory separate candidate-verification check, not an install hook. SHA-256, architecture and Valve signature remain mandatory in Cask install. Gatekeeper and quarantine remain enabled for first launch.
 - `auto_updates true` separates Valve self-updates from bootstrapper updates. Use `--greedy`; the script tracks package changes, not unrelated whole-client manifest bumps.
 
+- Initial GitHub macOS 15 CI caught an Xcode lipo argument-order incompatibility. Use `lipo <input> -verify_arch arm64` for compatibility with both older Xcode and the local macOS 27 toolchain.
+
 ## Actual results
 
 | Check | Result |

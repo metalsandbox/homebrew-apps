@@ -92,8 +92,8 @@ def verify(info, archive, stage):
     subprocess.run(["/usr/bin/tar", "-xzf", str(stage / "SteamMacBootstrapper.tar.gz"),
                     "-C", str(stage)], check=True)
     app = stage / "Steam.app"
-    subprocess.run(["/usr/bin/lipo", "-verify_arch", "arm64",
-                    str(app / "Contents/MacOS/steam_osx")], check=True)
+    subprocess.run(["/usr/bin/lipo", str(app / "Contents/MacOS/steam_osx"),
+                    "-verify_arch", "arm64"], check=True)
     subprocess.run(["/usr/bin/codesign", "--verify", "--deep", "--strict", "-R",
                     REQUIREMENT, str(app)], check=True)
     subprocess.run(["/usr/sbin/spctl", "--assess", "--type", "execute", str(app)], check=True)

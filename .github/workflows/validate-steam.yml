@@ -40,7 +40,7 @@ jobs:
         run: |
           test "$(uname -m)" = arm64
           brew install --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
-          lipo -verify_arch arm64 "$RUNNER_TEMP/apps/Steam.app/Contents/MacOS/steam_osx"
+          lipo "$RUNNER_TEMP/apps/Steam.app/Contents/MacOS/steam_osx" -verify_arch arm64
           brew reinstall --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
           brew uninstall --cask metalsandbox/apps/steam-arm64
           test ! -e "$RUNNER_TEMP/apps/Steam.app"
