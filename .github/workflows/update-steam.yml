@@ -1,0 +1,41 @@
+name: Check Steam bootstrapper
+on:
+  schedule:
+    - cron: '31 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: update-steam
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: macos-15
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Verify candidate and open review PR
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 scripts/check-upstream.py --write
+          if git diff --quiet -- Casks/steam-arm64.rb; then exit 0; fi
+          ruby -c Casks/steam-arm64.rb
+          brew tap metalsandbox/apps "$GITHUB_WORKSPACE"
+          brew trust --cask metalsandbox/apps/steam-arm64
+          brew install --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
+          brew uninstall --cask metalsandbox/apps/steam-arm64
+          branch="automation/steam-$(shasum -a 256 Casks/steam-arm64.rb | cut -c1-16)"
+          if git ls-remote --exit-code origin "refs/heads/$branch" >/dev/null 2>&1; then exit 0; fi
+          git switch -c "$branch"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Casks/steam-arm64.rb
+          git commit -m 'Update verified Steam ARM64 bootstrapper'
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" --title 'Update Steam ARM64 bootstrapper' --body 'Valve stable manifest update. SHA-256, ARM64 slice, Valve Developer ID, Gatekeeper, Homebrew isolated installation checked before proposal. Style/audit require a separate opt-in manual validation run. Human review required; no automatic merge. GITHUB_TOKEN-created PRs do not trigger PR workflows; these checks ran in the scheduled workflow.'

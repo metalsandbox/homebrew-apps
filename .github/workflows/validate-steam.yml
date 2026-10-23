@@ -1,0 +1,46 @@
+name: Validate Steam ARM64
+on:
+  pull_request:
+    paths: ['Casks/steam-arm64.rb', 'scripts/check-upstream.py', 'tests/**', '.github/workflows/*steam*']
+  push:
+    branches: [main]
+    paths: ['Casks/steam-arm64.rb', 'scripts/check-upstream.py', 'tests/**', '.github/workflows/*steam*']
+  workflow_dispatch:
+    inputs:
+      full_audit:
+        description: 'Allow Homebrew to provision its style/audit tools on this disposable runner'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: macos-15
+    timeout-minutes: 20
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Unit tests and Ruby syntax
+        run: |
+          python3 -m unittest discover -s tests -v
+          ruby -c Casks/steam-arm64.rb
+      - name: Register candidate tap
+        run: |
+          brew tap metalsandbox/apps "$GITHUB_WORKSPACE"
+          brew trust --cask metalsandbox/apps/steam-arm64
+      - name: Style and audit (explicit opt-in)
+        if: github.event_name == 'workflow_dispatch' && inputs.full_audit
+        run: |
+          brew style --cask metalsandbox/apps/steam-arm64
+          brew audit --cask --strict metalsandbox/apps/steam-arm64
+      - name: Install, reinstall and uninstall bootstrapper
+        run: |
+          test "$(uname -m)" = arm64
+          brew install --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
+          lipo "$RUNNER_TEMP/apps/Steam.app/Contents/MacOS/steam_osx" -verify_arch arm64
+          brew reinstall --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
+          brew uninstall --cask metalsandbox/apps/steam-arm64
+          test ! -e "$RUNNER_TEMP/apps/Steam.app"
