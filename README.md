@@ -1,6 +1,30 @@
 # metalsandbox/apps
 
-个人维护的开源 Homebrew Tap，提供 OffPDF 与 Steam ARM64 bootstrapper。与 Valve、Homebrew 或 OffPDF 作者无隶属关系。Tap 源码使用 MIT 许可证，应用本身遵循各自许可。
+个人维护的开源 Homebrew Tap，提供 better-speedtest、OffPDF 与 Steam ARM64 bootstrapper。与各上游项目及 Homebrew 无隶属关系。Tap 源码使用 MIT 许可证，应用本身遵循各自许可。
+
+## better-speedtest
+
+macOS 命令行多源测速工具，支持全球网测/cnspeed、Ookla 和自定义 CDN。配方安装上游固定版本的 macOS 发布包，分别支持 Apple Silicon 与 Intel，并校验 SHA-256；没有额外运行依赖或常驻服务。
+
+```sh
+brew install metalsandbox/apps/better-speedtest
+better-speedtest version
+better-speedtest nodes --src cnspeed --full
+better-speedtest test --src cnspeed --node "节点名称或IP" --dur 10 --no-upload
+```
+
+将示例中的节点名称或 IP 替换为列表中的实际值。测速会消耗带宽，部分节点可能不可用；第三方客户端接入全球网测不代表获得中国信通院官方背书。上游节点接口变化可能导致测速失效。
+
+程序仅在执行命令时运行，测速结束退出。macOS 默认配置为 `~/Library/Application Support/better-speedtest/config.json`，也可通过 `BETTER_SPEEDTEST_CONFIG` 指定。配方不创建或覆盖用户配置。`nodes --src cdn` 可以离线列出内置 CDN；运营商节点查询和测速需要联网。使用上游默认配置时，部分联网命令还会检查运营商表更新。
+
+```sh
+brew update
+brew upgrade metalsandbox/apps/better-speedtest
+brew test metalsandbox/apps/better-speedtest
+brew uninstall metalsandbox/apps/better-speedtest
+```
+
+卸载不删除用户配置和缓存。当前配方使用固定版本；新版本发布后需更新 URL 对应版本和两个架构的校验值。[上游项目](https://github.com/Gaimoydev/better-speedtest)
 
 ## Steam ARM64
 

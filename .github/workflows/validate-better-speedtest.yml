@@ -1,0 +1,38 @@
+name: Validate better-speedtest
+
+on:
+  push:
+    paths:
+      - Formula/better-speedtest.rb
+      - .github/workflows/validate-better-speedtest.yml
+  pull_request:
+    paths:
+      - Formula/better-speedtest.rb
+      - .github/workflows/validate-better-speedtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Register checkout as tap
+        run: brew tap metalsandbox/apps "$GITHUB_WORKSPACE"
+      - name: Install and test
+        run: |
+          brew install metalsandbox/apps/better-speedtest
+          better-speedtest version
+          brew test metalsandbox/apps/better-speedtest
+      - name: Uninstall
+        if: always()
+        run: brew uninstall better-speedtest || true
