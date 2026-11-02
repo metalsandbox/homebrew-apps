@@ -4,6 +4,8 @@ class BetterSpeedtest < Formula
   version "0.0.3"
   license "MIT"
 
+  depends_on :macos
+
   on_macos do
     on_arm do
       url "https://github.com/Gaimoydev/better-speedtest/releases/download/v#{version}/better-speedtest-darwin-arm64.tar.gz"
@@ -14,8 +16,6 @@ class BetterSpeedtest < Formula
       sha256 "e884391522c942939bf3593312eae726461513dacef2c926f85594cd23845f58"
     end
   end
-
-  depends_on :macos
 
   def install
     arch = Hardware::CPU.arm? ? "arm64" : "amd64"
