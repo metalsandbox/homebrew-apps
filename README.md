@@ -11,6 +11,8 @@ brew install --cask metalsandbox/apps/canon-print
 brew uninstall --cask metalsandbox/apps/canon-print
 ```
 
+[更新工作流](.github/workflows/update-canon-print.yml) 每天两次查询佳能中国的 TS8880 支持列表。发现新版后，核验佳能签名、Gatekeeper、双架构及最低系统版本，计算并写入 SHA-256，再由 Homebrew 校验下载，全部通过后自动提交。可在 GitHub Actions 手动触发检查。
+
 ## better-speedtest
 
 macOS 命令行多源测速工具，支持全球网测/cnspeed、Ookla 和自定义 CDN。配方安装上游固定版本的 macOS 发布包，分别支持 Apple Silicon 与 Intel，并校验 SHA-256；没有额外运行依赖或常驻服务。

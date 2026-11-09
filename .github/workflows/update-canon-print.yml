@@ -1,0 +1,39 @@
+name: Update Canon PRINT cask
+
+on:
+  schedule:
+    - cron: "47 3,15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-canon-print
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+      - name: Check upstream and verify new releases
+        run: python3 scripts/update_canon_print.py
+      - name: Validate and publish cask update
+        env:
+          HOMEBREW_DEVELOPER: "1"
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_ANALYTICS: "1"
+        run: |
+          cask=Casks/canon-print.rb
+          if git diff --quiet -- "$cask"; then exit 0; fi
+          ruby -c "$cask"
+          brew fetch --cask --retry "$PWD/$cask"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$cask"
+          git commit -m 'Update Canon PRINT cask'
+          git push origin HEAD:main
