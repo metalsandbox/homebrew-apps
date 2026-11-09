@@ -21,6 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Verify candidate and open review PR
+        shell: bash
         run: |
           python3 -m unittest discover -s tests -v
           python3 scripts/check-upstream.py --write
@@ -31,11 +32,22 @@ jobs:
           brew install --cask --appdir="$RUNNER_TEMP/apps" metalsandbox/apps/steam-arm64
           brew uninstall --cask metalsandbox/apps/steam-arm64
           branch="automation/steam-$(shasum -a 256 Casks/steam-arm64.rb | cut -c1-16)"
-          if git ls-remote --exit-code origin "refs/heads/$branch" >/dev/null 2>&1; then exit 0; fi
-          git switch -c "$branch"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Casks/steam-arm64.rb
-          git commit -m 'Update verified Steam ARM64 bootstrapper'
-          git push origin "$branch"
-          gh pr create --base main --head "$branch" --title 'Update Steam ARM64 bootstrapper' --body 'Valve stable manifest update. SHA-256, ARM64 slice, Valve Developer ID, Gatekeeper, Homebrew isolated installation checked before proposal. Style/audit require a separate opt-in manual validation run. Human review required; no automatic merge. GITHUB_TOKEN-created PRs do not trigger PR workflows; these checks ran in the scheduled workflow.'
+          existing_pr=$(gh pr list --base main --head "$branch" --state all --limit 1 --json url --jq '.[0].url // empty')
+          if [ -n "$existing_pr" ]; then
+            echo "Update already proposed in $existing_pr"
+            exit 0
+          fi
+
+          remote_branch=$(git ls-remote --heads origin "refs/heads/$branch")
+          if [ -n "$remote_branch" ]; then
+            git fetch --no-tags origin "refs/heads/$branch"
+            git show FETCH_HEAD:Casks/steam-arm64.rb | cmp - Casks/steam-arm64.rb
+          else
+            git switch -c "$branch"
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add Casks/steam-arm64.rb
+            git commit -m 'Update verified Steam ARM64 bootstrapper'
+            git push origin "$branch"
+          fi
+          gh pr create --base main --head "$branch" --title 'Update Steam ARM64 bootstrapper' --body 'The update workflow verified the Valve stable download, SHA-256, ARM64 slice, Valve Developer ID, Gatekeeper, and isolated Homebrew installation. Style and audit require a separate opt-in run. Human review is required before merging.'
