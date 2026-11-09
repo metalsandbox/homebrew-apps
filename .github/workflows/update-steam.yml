@@ -50,4 +50,7 @@ jobs:
             git commit -m 'Update verified Steam ARM64 bootstrapper'
             git push origin "$branch"
           fi
-          gh pr create --base main --head "$branch" --title 'Update Steam ARM64 bootstrapper' --body 'The update workflow verified the Valve stable download, SHA-256, ARM64 slice, Valve Developer ID, Gatekeeper, and isolated Homebrew installation. Style and audit require a separate opt-in run. Human review is required before merging.'
+          if ! gh pr create --base main --head "$branch" --title 'Update Steam ARM64 bootstrapper' --body 'The update workflow verified the Valve stable download, SHA-256, ARM64 slice, Valve Developer ID, Gatekeeper, and isolated Homebrew installation. Style and audit require a separate opt-in run. Human review is required before merging.'; then
+            printf 'The verified Steam update branch is ready. [Open the pull request manually](https://github.com/%s/compare/main...%s?expand=1).\n' "$GH_REPO" "$branch" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
