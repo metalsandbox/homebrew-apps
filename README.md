@@ -2,6 +2,19 @@
 
 个人维护的开源 Homebrew Tap，提供 better-speedtest、Canon PRINT、OffPDF 与 Steam ARM64 bootstrapper。与各上游项目及 Homebrew 无隶属关系。Tap 源码使用 MIT 许可证，应用本身遵循各自许可。
 
+## AutoCAD for Mac（本地 DMG，实验性）
+
+Autodesk 的 AutoCAD 安装包通常需要登录 Autodesk Account 下载。为了避免在公共 Tap 中存储受限下载链接或用户凭证，本项目提供**本地 Cask 生成器**：校验用户自行下载的原版 DMG，生成本机专用的 Homebrew Cask，用 Autodesk 原版 Setup 安装。**尚未在实际 AutoCAD DMG 上完成端到端验证；当前不承诺自动升级或完全卸载。**
+
+```sh
+brew tap metalsandbox/apps
+cd "$(brew --repository metalsandbox/apps)"
+python3 scripts/prepare-autocad-cask.py --dmg "/path/to/official-AutoCAD.dmg" --year 2027
+brew install --cask ./Casks/autocad-local.rb
+```
+
+实际产品年份及 DMG 文件名应以 Autodesk Account 提供的版本为准。教育版资格和授权仍需通过 Autodesk 验证。完整说明和安全限制见 [AutoCAD 本地安装文档](docs/autocad-local.md)。
+
 ## Canon PRINT
 
 佳能喷墨打印机管理应用，适用于 macOS 11 及更新版本，支持 Apple Silicon 和 Intel。安装后在“应用程序”中显示为 Canon Inkjet Smart Connect。[佳能官方下载页面](https://www.canon.com.cn/supports/download/simsdetail/0200774411.html?modelId=10157&channel=1)
