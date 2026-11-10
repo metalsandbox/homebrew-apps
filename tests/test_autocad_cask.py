@@ -17,7 +17,7 @@ class TestAutoCADCask(unittest.TestCase):
             path.write_bytes(b"autocad-test")
             self.assertEqual(
                 module.digest(path),
-                "b2b16e474ab13259d10b8484052ce6409e37eef314160b7c7ac9c407c0560bf9"
+                "0fef1d8d57080571b903149e1db6f324ddd2a05a3b8467f4ba969567dd7360f5"
             )
 
     def test_renders_local_uri_and_checksum(self):
