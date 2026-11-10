@@ -7,9 +7,29 @@ cask "autocad" do
   desc "Autodesk 2D and 3D CAD design software"
   homepage "https://www.autodesk.com/products/autocad/overview"
 
+  generated_script "install-autocad.sh", content: <<~SH
+    #!/bin/sh
+    set -eu
+    staged_dir='#{staged_path}'
+    setup_path=''
+    while IFS= read -r candidate; do
+      if [ -n "$setup_path" ]; then
+        echo "Multiple Autodesk Setup executables found; refusing ambiguous install." >&2
+        exit 1
+      fi
+      setup_path="$candidate"
+    done <<EOF
+    $(/usr/bin/find "$staged_dir" -type f -path '*/Contents/Helper/Setup.app/Contents/MacOS/Setup' -print)
+    EOF
+    if [ -z "$setup_path" ]; then
+      echo "Autodesk Setup executable missing from downloaded DMG." >&2
+      exit 1
+    fi
+    exec "$setup_path" --silent
+  SH
+
   installer script: {
-    executable: "Install Autodesk AutoCAD 2027.app/Contents/Helper/Setup.app/Contents/MacOS/Setup",
-    args:       ["--silent"],
+    executable: "install-autocad.sh",
     sudo:       true,
   }
 
