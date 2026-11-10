@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 *.tmp
+# Generated from licensed user-owned Autodesk installer; contains machine-local paths
+/Casks/autocad-local.rb
