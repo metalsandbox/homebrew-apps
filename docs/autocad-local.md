@@ -1,3 +1,17 @@
+## 直接安装（不做 Homebrew SHA-256 校验）
+
+开发分支新增 `Casks/autocad.rb`，固定 AutoCAD 2027.1 官方 CDN 地址，使用 `sha256 :no_check`。它绕过 Homebrew SHA-256 校验，但不绕过 macOS Gatekeeper/代码签名要求，也不跳过 Autodesk 授权。实机尚未验证 CDN 是否匿名可用及 Setup 路径是否与 2027 文档一致。
+
+```sh
+brew tap metalsandbox/apps
+cd "$(brew --repository metalsandbox/apps)"
+git fetch origin feat/autocad-local-cask
+git switch --detach origin/feat/autocad-local-cask
+brew install --cask ./Casks/autocad.rb
+```
+
+不要使用已过期或含 `session_id` 的下载地址。卸载配方只尝试删除主程序，其他共享 Autodesk 组件可能保留。
+
 # AutoCAD for Mac via Homebrew (local Autodesk installer)
 
 **Experimental / unverified on a Mac with AutoCAD installed.** This workflow is for a **legitimately obtained** Autodesk AutoCAD for Mac DMG from the user's own [Autodesk Account](https://manage.autodesk.com/). It does not bypass Autodesk licensing or distribute Autodesk binaries. Autodesk currently distributes AutoCAD for Mac through account-based downloads; this repository intentionally contains no fabricated public download URL or authentication token.
