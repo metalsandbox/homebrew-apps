@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 
 THREAD = "https://forums.autodesk.com/t5/installation-licensing-forum/2027-product-download-links/td-p/14055738"
 UA = "Mozilla/5.0 (compatible; homebrew-apps-autocad-discovery/1.0)"
-PATH = re.compile(r"^/NetSWDLD/ODIS/prd/(20[0-9]{2})/ACDMAC/[A-Za-z0-9-]+/SFX/(Autodesk_AutoCAD_([0-9]{4}(?:\\.[0-9]+)?)_macOS\\.dmg)$", re.I)
+PATH = re.compile(r"^/NetSWDLD/ODIS/prd/(20[0-9]{2})/ACDMAC/[A-Za-z0-9-]+/SFX/(Autodesk_AutoCAD_([0-9]{4}(?:\.[0-9]+)?)_macOS\.dmg)$", re.I)
 
 
 class Links(HTMLParser):
