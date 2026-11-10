@@ -2,6 +2,21 @@
 
 **Experimental / unverified on a Mac with AutoCAD installed.** This workflow is for a **legitimately obtained** Autodesk AutoCAD for Mac DMG from the user's own [Autodesk Account](https://manage.autodesk.com/). It does not bypass Autodesk licensing or distribute Autodesk binaries. Autodesk currently distributes AutoCAD for Mac through account-based downloads; this repository intentionally contains no fabricated public download URL or authentication token.
 
+## Public-first distribution policy
+
+**Priority 1: publicly shared, session-free Autodesk CDN links.** The Autodesk Community [2027 Product Download links](https://forums.autodesk.com/t5/installation-licensing-forum/2027-product-download-links/td-p/14055738) contains an AutoCAD 2027 Mac entry and is the current discovery source. The installation binary is downloaded directly from `efulfillment.autodesk.com`, never mirrored by this Tap.
+
+```sh
+python3 scripts/discover-autocad.py
+python3 scripts/discover-autocad.py --json
+```
+
+The [weekly discovery workflow](../.github/workflows/discover-autocad.yml) checks this community thread and opens a **review issue** if it observes a newer release than the currently known 2027.1. It does **not** autonomously update the Cask, merge a PR, or download proprietary software. For future major releases, maintainers must update the thread source and baseline as needed. The community forum is user-maintained and may change HTML, split replies across pages, or lag behind Autodesk Account.
+
+**Priority 2: private local DMG** as described below, if public downloading fails or an update has not appeared publicly.
+
+Before shipping a public, directly installable `Casks/autocad.rb`, verify the URL without cookies/session ID, inspect the actual DMG, pin its SHA-256, audit code signing and `Setup` invocation, and test Homebrew installation/uninstallation on macOS. The current PR is discovery and local-install groundwork only; a verified public Cask is not yet available. Education licensing still requires Autodesk approval.
+
 ## Prepare and install
 
 On macOS with Homebrew and Python 3:
