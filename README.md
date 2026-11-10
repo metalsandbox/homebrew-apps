@@ -15,6 +15,20 @@ brew install --cask ./Casks/autocad-local.rb
 
 实际产品年份及 DMG 文件名应以 Autodesk Account 提供的版本为准。教育版资格和授权仍需通过 Autodesk 验证。完整说明和安全限制见 [AutoCAD 本地安装文档](docs/autocad-local.md)。
 
+### 直接安装 AutoCAD 2027.1（实验性）
+
+已添加 `Casks/autocad.rb`：直接使用无 `session_id` 的 Autodesk CDN 地址，并按用户要求设置 `sha256 :no_check`，由 Homebrew 调用 Autodesk Setup。该下载地址及 2027.1 的安装器布局尚未在真实 Mac 上验证。
+
+```sh
+brew tap metalsandbox/apps
+cd "$(brew --repository metalsandbox/apps)"
+git fetch origin feat/autocad-local-cask
+git switch --detach origin/feat/autocad-local-cask
+brew install --cask ./Casks/autocad.rb
+```
+
+`sha256 :no_check` 会取消 Homebrew 的内容校验；macOS 自身的签名和 Gatekeeper 策略不受修改。授权仍需 Autodesk 账户。安装失败时不要关闭 Gatekeeper，检查完整错误信息。主分支尚未包含此 Cask。
+
 ## Canon PRINT
 
 佳能喷墨打印机管理应用，适用于 macOS 11 及更新版本，支持 Apple Silicon 和 Intel。安装后在“应用程序”中显示为 Canon Inkjet Smart Connect。[佳能官方下载页面](https://www.canon.com.cn/supports/download/simsdetail/0200774411.html?modelId=10157&channel=1)
