@@ -1,0 +1,45 @@
+name: Discover AutoCAD for Mac updates
+
+on:
+  schedule:
+    - cron: "19 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Autodesk community for newer public releases
+        id: check
+        run: |
+          python3 scripts/discover-autocad.py --json > autocad-candidates.json
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          known = (2027, 1)
+          candidates = json.loads(Path("autocad-candidates.json").read_text())
+          newer = [x for x in candidates if tuple(map(int, x["version"].split("."))) > known]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              print("new_version=" + (newer[0]["version"] if newer else ""), file=output)
+              print("new_url=" + (newer[0]["url"] if newer else ""), file=output)
+          PY
+      - name: Open tracking issue for unverified candidate
+        if: steps.check.outputs.new_version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.check.outputs.new_version }}
+          URL: ${{ steps.check.outputs.new_url }}
+        run: |
+          title="AutoCAD for Mac ${VERSION}: verify public DMG"
+          if gh issue list --state all --search "\"$title\" in:title" --json title --jq '.[].title' | grep -Fxq "$title"; then
+            echo "Existing tracking issue found."
+            exit 0
+          fi
+          gh issue create --title "$title" --body "Discovered in the Autodesk community: ${URL}
+
+          Candidate only. Before updating a Homebrew Cask, verify anonymous download, DMG integrity, SHA-256, signature, macOS installer layout, install/upgrade/uninstall semantics and license. Do not include session IDs or publish unverified checksums."
