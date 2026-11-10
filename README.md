@@ -4,7 +4,7 @@
 
 ## AutoCAD for Mac（本地 DMG，实验性）
 
-Autodesk 的 AutoCAD 安装包通常需要登录 Autodesk Account 下载。为了避免在公共 Tap 中存储受限下载链接或用户凭证，本项目提供**本地 Cask 生成器**：校验用户自行下载的原版 DMG，生成本机专用的 Homebrew Cask，用 Autodesk 原版 Setup 安装。**尚未在实际 AutoCAD DMG 上完成端到端验证；当前不承诺自动升级或完全卸载。**
+**以 Autodesk 社区公开的官方 CDN 链接为优先来源。** 新增每周版本发现工作流，在社区出现高于当前已知 2027.1 的版本时创建审核 Issue。当前尚未完成公共 URL 的匿名下载、DMG 校验与实机安装验证，因此提供**本地 DMG Cask 生成器作为暂行方案**：校验用户自行下载的原版 DMG，生成本机专用的 Homebrew Cask，用 Autodesk 原版 Setup 安装。**尚未在实际 AutoCAD DMG 上完成端到端验证；当前不承诺自动升级或完全卸载。**
 
 ```sh
 brew tap metalsandbox/apps
