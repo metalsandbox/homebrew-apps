@@ -55,3 +55,19 @@ Sources:
 - [Autodesk: Deploy AutoCAD for Mac](https://www.autodesk.com/support/download-install/admins/account-deploy/deploy-autocad-for-mac)
 - [Autodesk: Uninstall Autodesk software](https://www.autodesk.com/support/download-install/individuals/manage/uninstall-autodesk-software)
 - [Homebrew: Cask Cookbook](https://docs.brew.sh/Cask-Cookbook)
+
+## Immediate installation attempt: AutoCAD 2027.1
+
+For a Mac with Homebrew, clone the development branch and run its installer. It downloads the session-free official Autodesk URL (the request may fail if Autodesk requires authentication), validates the DMG with `hdiutil verify`, computes its actual SHA-256, generates a local Cask and invokes Homebrew.
+
+```sh
+brew tap metalsandbox/apps
+cd "$(brew --repository metalsandbox/apps)"
+git fetch origin feat/autocad-local-cask
+git switch --detach origin/feat/autocad-local-cask
+bash scripts/install-autocad-2027.sh
+```
+
+**Warning:** this has not yet been tested against the real AutoCAD 2027.1 DMG on macOS. If Autodesk blocks the anonymous download, download the official DMG through Autodesk Account, then use `python3 scripts/prepare-autocad-cask.py --dmg /actual/path/Autodesk_AutoCAD_2027.1_macOS.dmg --year 2027` and `brew install --cask ./Casks/autocad-local.rb`. If you see an installation error, preserve the output for debugging rather than disabling security checks.
+
+Keep the generated Cask, cached source DMG and Homebrew installation record together. This is not yet a fully tested direct `brew install metalsandbox/apps/autocad` implementation.
